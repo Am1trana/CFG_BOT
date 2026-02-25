@@ -199,55 +199,50 @@ window.addEventListener(
     console.log("Conversation started → locking input");
 
     // wait for chat UI to render
-    setTimeout(() => {
+    const interval = setInterval(() => {
 
-      const interval = setInterval(() => {
+  const inputField = document.querySelector("textarea");
+  const sendButton = document.querySelector("button[title='Send']");
 
-        const inputField = document.querySelector("textarea");
-        const sendButton = document.querySelector("button[title='Send']");
+  if (!inputField) return;
 
-        if (!inputField) return;
+  console.log("Input found → locking immediately");
 
-        // Disable typing
-        inputField.disabled = true;
-        inputField.placeholder = "Connecting... Please wait";
+  // LOCK IMMEDIATELY
+  inputField.disabled = true;
+  inputField.placeholder = "Connecting... Please wait";
 
-        // Disable send button
-        if (sendButton) sendButton.disabled = true;
+  if (sendButton) sendButton.disabled = true;
 
-        // Prevent Enter key
-        const preventEnter = (e) => {
-          if (e.key === "Enter") e.preventDefault();
-        };
+  const preventEnter = (e) => {
+    if (e.key === "Enter") e.preventDefault();
+  };
 
-        inputField.addEventListener("keydown", preventEnter);
+  inputField.addEventListener("keydown", preventEnter);
 
-        // Unlock after 3 seconds
-        setTimeout(() => {
+  // Unlock after 4 seconds
+  setTimeout(() => {
 
-          inputField.disabled = false;
-          inputField.placeholder = "Type your message...";
+    inputField.disabled = false;
+    inputField.placeholder = "Type your message...";
 
-          if (sendButton) sendButton.disabled = false;
+    if (sendButton) sendButton.disabled = false;
 
-          inputField.removeEventListener("keydown", preventEnter);
+    inputField.removeEventListener("keydown", preventEnter);
 
-          console.log("Chat input unlocked");
+    console.log("Chat input unlocked");
 
-        }, 4000);
+  }, 4000);
 
-        clearInterval(interval);
+  clearInterval(interval);
 
-      }, 200);
-
-    }, 300);
-  }
-);
+}, 50); // faster detection
 </script>
  
 </body>
  
 </html>
+
 
 
 
