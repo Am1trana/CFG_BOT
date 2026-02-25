@@ -154,7 +154,7 @@
         <a href="#">How Search works</a>
       </div>
       <div>
-        <a href="#">Privacy Y</a>
+        <a href="#">Privacy</a>
         <a href="#">Terms</a>
         <a href="#">Settings</a>
       </div>
@@ -182,59 +182,65 @@
 
 <script type='text/javascript' src='https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 <script>
-/* ==========================================
-   SMART FIX — Always lock first input render
-========================================== */
+/* ================================
+   FIX: Prevent Double "hii"
+   Locks chat input for 3 seconds
+================================ */
 
-let welcomePhase = true;
+let chatInputLocked = false;
 
 window.addEventListener(
   "onEmbeddedMessagingConversationStarted",
-  () => {
+  function () {
 
-    console.log("Conversation started");
+    if (chatInputLocked) return;
+    chatInputLocked = true;
 
-    const observer = new MutationObserver(() => {
+    console.log("Conversation started → locking input");
 
-      const inputField = document.querySelector(
-        "textarea.embeddedMessagingInputFooterTextArea"
-      );
+    // wait for chat UI to render
+    setTimeout(() => {
 
-      const sendButton = document.querySelector(
-        "button[title='Send']"
-      );
+      const interval = setInterval(() => {
 
-      if (!inputField || !welcomePhase) return;
+        const inputField = document.querySelector("textarea");
+        const sendButton = document.querySelector("button[title='Send']");
 
-      console.log("Input detected → locking");
+        if (!inputField) return;
 
-      // LOCK INPUT
-      inputField.disabled = true;
-      inputField.placeholder = "Connecting... Please wait";
+        // Disable typing
+        inputField.disabled = true;
+        inputField.placeholder = "Connecting... Please wait";
 
-      if (sendButton) sendButton.disabled = true;
+        // Disable send button
+        if (sendButton) sendButton.disabled = true;
 
-      // unlock after agent welcome time
-      setTimeout(() => {
+        // Prevent Enter key
+        const preventEnter = (e) => {
+          if (e.key === "Enter") e.preventDefault();
+        };
 
-        inputField.disabled = false;
-        inputField.placeholder = "Type your message...";
+        inputField.addEventListener("keydown", preventEnter);
 
-        if (sendButton) sendButton.disabled = false;
+        // Unlock after 3 seconds
+        setTimeout(() => {
 
-        welcomePhase = false;
-        observer.disconnect();
+          inputField.disabled = false;
+          inputField.placeholder = "Type your message...";
 
-        console.log("Input unlocked");
+          if (sendButton) sendButton.disabled = false;
 
-      }, 4000);
+          inputField.removeEventListener("keydown", preventEnter);
 
-    });
+          console.log("Chat input unlocked");
 
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
+        }, 4000);
+
+        clearInterval(interval);
+
+      }, 200);
+
+    }, 500);
   }
 );
 </script>
@@ -242,3 +248,16 @@ window.addEventListener(
 </body>
  
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
