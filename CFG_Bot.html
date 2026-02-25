@@ -182,65 +182,39 @@
 
 <script type='text/javascript' src='https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 <script>
-/* ================================
-   FIX: Prevent Double "hii"
-   Locks chat input for 3 seconds
-================================ */
+/* ==========================================
+   TRUE FIX — Welcome when agent joins
+========================================== */
 
-let chatInputLocked = false;
+let welcomeSent = false;
 
 window.addEventListener(
-  "onEmbeddedMessagingConversationStarted",
-  function () {
+  "onEmbeddedMessagingConversationParticipantChanged",
+  (event) => {
 
-    if (chatInputLocked) return;
-    chatInputLocked = true;
+    if (welcomeSent) return;
 
-    console.log("Conversation started → locking input");
+    const participants = event.detail?.participants || [];
 
-    // wait for chat UI to render
-    setTimeout(() => {
+    // check if bot/agent joined
+    const agentJoined = participants.some(p =>
+      p.role === "Agent" || p.role === "Bot"
+    );
 
-      const interval = setInterval(() => {
+    if (!agentJoined) return;
 
-        const inputField = document.querySelector("textarea");
-        const sendButton = document.querySelector("button[title='Send']");
+    welcomeSent = true;
 
-        if (!inputField) return;
+    console.log("Agent joined → sending welcome trigger");
 
-        // Disable typing
-        inputField.disabled = true;
-        inputField.placeholder = "Connecting... Please wait";
+    // OPTIONAL UX hint (no blocking needed)
+    const inputField = document.querySelector(
+      "textarea.embeddedMessagingInputFooterTextArea"
+    );
 
-        // Disable send button
-        if (sendButton) sendButton.disabled = true;
-
-        // Prevent Enter key
-        const preventEnter = (e) => {
-          if (e.key === "Enter") e.preventDefault();
-        };
-
-        inputField.addEventListener("keydown", preventEnter);
-
-        // Unlock after 3 seconds
-        setTimeout(() => {
-
-          inputField.disabled = false;
-          inputField.placeholder = "Type your message...";
-
-          if (sendButton) sendButton.disabled = false;
-
-          inputField.removeEventListener("keydown", preventEnter);
-
-          console.log("Chat input unlocked");
-
-        }, 4000);
-
-        clearInterval(interval);
-
-      }, 200);
-
-    }, 500);
+    if (inputField) {
+      inputField.placeholder = "Agent is ready to help you...";
+    }
   }
 );
 </script>
@@ -248,6 +222,7 @@ window.addEventListener(
 </body>
  
 </html>
+
 
 
 
