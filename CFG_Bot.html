@@ -179,12 +179,76 @@
 		}
 	};
 </script>
-<script type='text/javascript' src='https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 
+<script type='text/javascript' src='https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+<script>
+/* ================================
+   FIX: Prevent Double "hii"
+   Locks chat input for 3 seconds
+================================ */
+
+let chatInputLocked = false;
+
+window.addEventListener(
+  "onEmbeddedMessagingConversationStarted",
+  function () {
+
+    if (chatInputLocked) return;
+    chatInputLocked = true;
+
+    console.log("Conversation started → locking input");
+
+    // wait for chat UI to render
+    setTimeout(() => {
+
+      const interval = setInterval(() => {
+
+        const inputField = document.querySelector("textarea");
+        const sendButton = document.querySelector("button[title='Send']");
+
+        if (!inputField) return;
+
+        // Disable typing
+        inputField.disabled = true;
+        inputField.placeholder = "Connecting... Please wait";
+
+        // Disable send button
+        if (sendButton) sendButton.disabled = true;
+
+        // Prevent Enter key
+        const preventEnter = (e) => {
+          if (e.key === "Enter") e.preventDefault();
+        };
+
+        inputField.addEventListener("keydown", preventEnter);
+
+        // Unlock after 3 seconds
+        setTimeout(() => {
+
+          inputField.disabled = false;
+          inputField.placeholder = "Type your message...";
+
+          if (sendButton) sendButton.disabled = false;
+
+          inputField.removeEventListener("keydown", preventEnter);
+
+          console.log("Chat input unlocked");
+
+        }, 3000);
+
+        clearInterval(interval);
+
+      }, 200);
+
+    }, 300);
+  }
+);
+</script>
  
 </body>
  
 </html>
+
 
 
 
