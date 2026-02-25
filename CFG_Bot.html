@@ -156,7 +156,7 @@
       <div>
         <a href="#">Privacy</a>
         <a href="#">Terms</a>
-        <a href="#">Settings S</a>
+        <a href="#">Settings</a>
       </div>
     </div>
   </footer>
@@ -184,7 +184,7 @@
 <script>
 /* ================================
    FIX: Prevent Double "hii"
-   Locks chat input for 4 seconds
+   Locks chat input for 3 seconds
 ================================ */
 
 let chatInputLocked = false;
@@ -198,45 +198,49 @@ window.addEventListener(
 
     console.log("Conversation started → locking input");
 
-    const interval = setInterval(() => {
+    // wait for chat UI to render
+    setTimeout(() => {
 
-      const inputField = document.querySelector("textarea");
-      const sendButton = document.querySelector("button[title='Send']");
+      const interval = setInterval(() => {
 
-      if (!inputField) return;
+        const inputField = document.querySelector("textarea");
+        const sendButton = document.querySelector("button[title='Send']");
 
-      console.log("Input found → locking immediately");
+        if (!inputField) return;
 
-      // LOCK IMMEDIATELY
-      inputField.disabled = true;
-      inputField.placeholder = "Connecting... Please wait";
+        // Disable typing
+        inputField.disabled = true;
+        inputField.placeholder = "Connecting... Please wait";
 
-      if (sendButton) sendButton.disabled = true;
+        // Disable send button
+        if (sendButton) sendButton.disabled = true;
 
-      const preventEnter = (e) => {
-        if (e.key === "Enter") e.preventDefault();
-      };
+        // Prevent Enter key
+        const preventEnter = (e) => {
+          if (e.key === "Enter") e.preventDefault();
+        };
 
-      inputField.addEventListener("keydown", preventEnter);
+        inputField.addEventListener("keydown", preventEnter);
 
-      // Unlock after 4 seconds
-      setTimeout(() => {
+        // Unlock after 3 seconds
+        setTimeout(() => {
 
-        inputField.disabled = false;
-        inputField.placeholder = "Type your message...";
+          inputField.disabled = false;
+          inputField.placeholder = "Type your message...";
 
-        if (sendButton) sendButton.disabled = false;
+          if (sendButton) sendButton.disabled = false;
 
-        inputField.removeEventListener("keydown", preventEnter);
+          inputField.removeEventListener("keydown", preventEnter);
 
-        console.log("Chat input unlocked");
+          console.log("Chat input unlocked");
 
-      }, 4000);
+        }, 4000);
 
-      clearInterval(interval);
+        clearInterval(interval);
 
-    }, 50);
+      }, 200);
 
+    }, 500);
   }
 );
 </script>
@@ -244,9 +248,6 @@ window.addEventListener(
 </body>
  
 </html>
-
-
-
 
 
 
