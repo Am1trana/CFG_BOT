@@ -148,7 +148,7 @@
     <div class="footer-top">India</div>
     <div class="footer-bottom">
       <div>
-        <a href="#">About A</a>
+        <a href="#">About </a>
         <a href="#">Advertising</a>
         <a href="#">Business</a>
         <a href="#">How Search works</a>
@@ -182,75 +182,32 @@
 
 <script type='text/javascript' src='https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 <script>
-let inputHandled = false;
+let sessionReady = false;
 
-/* ---------------------------------------
-   Deep shadow DOM query helper
---------------------------------------- */
-function queryDeep(selector, root = document) {
-  const elements = root.querySelectorAll("*");
-
-  for (const el of elements) {
-
-    // direct match
-    if (el.matches && el.matches(selector)) {
-      return el;
-    }
-
-    // search inside shadow root
-    if (el.shadowRoot) {
-      const found = queryDeep(selector, el.shadowRoot);
-      if (found) return found;
-    }
-  }
-  return null;
-}
-
-/* ---------------------------------------
-   Messaging event
---------------------------------------- */
 window.addEventListener(
-  "onEmbeddedMessagingConversationStarted",
-  () => {
+  "onEmbeddedMessagingSessionStatusUpdate",
+  (event) => {
 
-    if (inputHandled) return;
-    inputHandled = true;
+    console.log("Session status:", event.detail.status);
 
-    console.log("Conversation started");
-
-    const interval = setInterval(() => {
-
-      // ✅ finds textarea across ALL shadow DOM levels
-      const chatInput = queryDeep(
-        "textarea.embeddedMessagingInputFooterTextArea"
-      );
-
-      if (chatInput) {
-
-        console.log("Chat input located ✅");
-
-        const originalPlaceholder = chatInput.placeholder;
-
-        chatInput.disabled = true;
-        chatInput.placeholder = "Connecting... Please wait";
-
-        setTimeout(() => {
-          chatInput.disabled = false;
-          chatInput.placeholder = originalPlaceholder;
-          console.log("Chat input enabled");
-        }, 4000);
-
-        clearInterval(interval);
-      }
-
-    }, 200);
+    if (event.detail.status === "Active") {
+      sessionReady = true;
+      console.log("Messaging session READY ✅");
+    }
   }
 );
-</script>
- 
+
+/* Prevent early sending */
+window.addEventListener("onEmbeddedMessageSent", (event) => {
+  if (!sessionReady) {
+    console.warn("Message sent before session active.");
+  }
+});
+</script> 
 </body>
  
 </html>
+
 
 
 
