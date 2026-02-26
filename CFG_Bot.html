@@ -148,7 +148,7 @@
     <div class="footer-top">India</div>
     <div class="footer-bottom">
       <div>
-        <a href="#">About A</a>
+        <a href="#">About </a>
         <a href="#">Advertising</a>
         <a href="#">Business</a>
         <a href="#">How Search works</a>
@@ -182,52 +182,66 @@
 
 <script type='text/javascript' src='https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 <script>
-let inputDisabledOnce = false;
+let inputHandled = false;
 
-// When Messaging runtime is ready
-window.addEventListener("onEmbeddedMessagingReady", function () {
-console.log("Messaging ready.");
-});
+window.addEventListener(
+  "onEmbeddedMessagingConversationStarted",
+  () => {
 
-// When conversation officially starts
-window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
+    if (inputHandled) return;
+    inputHandled = true;
 
-if (inputDisabledOnce) return;
-inputDisabledOnce = true;
+    console.log("Conversation started");
 
-console.log("Conversation started — disabling input for 4 seconds.");
+    const findChatInput = () => {
 
-// Wait briefly to ensure input is rendered
-setTimeout(() => {
+      // Step 1 — messaging container
+      const messagingEl = document.querySelector(
+        "embeddedmessaging-conversation"
+      );
 
-const interval = setInterval(() => {
-const inputField = document.querySelector("textarea, input[type='text']");
+      if (!messagingEl || !messagingEl.shadowRoot) return null;
 
-if (inputField) {
-inputField.disabled = true;
+      // Step 2 — enter shadow DOM
+      const shadow = messagingEl.shadowRoot;
 
-// Optional: visually indicate disabled state
-inputField.placeholder = "Connecting... Please wait";
+      // Step 3 — find textarea
+      return shadow.querySelector(
+        "textarea.embeddedMessagingInputFooterTextArea"
+      );
+    };
 
-setTimeout(() => {
-inputField.disabled = false;
-inputField.placeholder = "Type your message...";
-console.log("Input re-enabled.");
-}, 4000);
+    const interval = setInterval(() => {
 
-clearInterval(interval);
-}
-}, 200);
+      const chatInput = findChatInput();
 
-}, 300);
+      if (chatInput) {
 
-});
+        console.log("Chat input found ✅");
+
+        const originalPlaceholder = chatInput.placeholder;
+
+        chatInput.disabled = true;
+        chatInput.placeholder = "Connecting... Please wait";
+
+        setTimeout(() => {
+          chatInput.disabled = false;
+          chatInput.placeholder = originalPlaceholder;
+          console.log("Chat input enabled");
+        }, 4000);
+
+        clearInterval(interval);
+      }
+
+    }, 200);
+  }
+);
 </script>
-
  
 </body>
  
 </html>
+
 
 
 
