@@ -148,7 +148,7 @@
     <div class="footer-top">India</div>
     <div class="footer-bottom">
       <div>
-        <a href="#">About </a>
+        <a href="#">About A</a>
         <a href="#">Advertising</a>
         <a href="#">Business</a>
         <a href="#">How Search works</a>
@@ -161,73 +161,92 @@
     </div>
   </footer>
 
-<!-- =====================================
-     1️⃣ DEFINE SETTINGS BEFORE BOOTSTRAP
-===================================== -->
-<script>
-window.embeddedservice_bootstrap =
-  window.embeddedservice_bootstrap || {};
+<script type='text/javascript'>
+  function initEmbeddedMessaging() {
+    try {
+      embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
 
-embeddedservice_bootstrap.settings = {
-  language: "en_US",
-  hideChatButtonOnLoad: true   // hide launcher until session ready
-};
+      embeddedservice_bootstrap.init(
+        '00DBf000000vYTB',
+        'CFG_Website',
+        'https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934',
+        {
+          scrt2URL: 'https://cfg--techiladev.sandbox.my.salesforce-scrt.com'
+        }
+      );
+    } catch (err) {
+      console.error('Error loading Embedded Messaging: ', err);
+    }
+  };
 </script>
 
-
-<!-- =====================================
-     2️⃣ INIT FUNCTION
-===================================== -->
+<script type='text/javascript' src='https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 <script>
-function initEmbeddedMessaging() {
-  try {
-    embeddedservice_bootstrap.init(
-      '00DBf000000vYTB',
-      'CFG_Website',
-      'https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934',
-      {
-        scrt2URL:
-          'https://cfg--techiladev.sandbox.my.salesforce-scrt.com'
-      }
-    );
-  } catch (err) {
-    console.error('Error loading Embedded Messaging:', err);
-  }
-}
-</script>
+/* ================================
+   FIX: Prevent Double "hii"
+   Locks chat input for 3 seconds
+================================ */
 
+let chatInputLocked = false;
 
-<!-- =====================================
-     3️⃣ LOAD SALESFORCE BOOTSTRAP
-===================================== -->
-<script
-  src="https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js"
-  onload="initEmbeddedMessaging()">
-</script>
-
-
-<!-- =====================================
-     4️⃣ WAIT FOR SESSION ACTIVE
-===================================== -->
-<script>
 window.addEventListener(
-  "onEmbeddedMessagingSessionStatusUpdate",
-  (event) => {
+  "onEmbeddedMessagingConversationStarted",
+  function () {
 
-    console.log("Session status:", event.detail.status);
+    if (chatInputLocked) return;
+    chatInputLocked = true;
 
-    if (event.detail.status === "Active") {
+    console.log("Conversation started → locking input");
 
-      console.log("Messaging session READY ✅");
+    // wait for chat UI to render
+    setTimeout(() => {
 
-      // show chat only after backend ready
-      embeddedservice_bootstrap.utilAPI.showChatButton();
-    }
+      const interval = setInterval(() => {
+
+        const inputField = document.querySelector("textarea");
+        const sendButton = document.querySelector("button[title='Send']");
+
+        if (!inputField) return;
+
+        // Disable typing
+        inputField.disabled = true;
+        inputField.placeholder = "Connecting... Please wait";
+
+        // Disable send button
+        if (sendButton) sendButton.disabled = true;
+
+        // Prevent Enter key
+        const preventEnter = (e) => {
+          if (e.key === "Enter") e.preventDefault();
+        };
+
+        inputField.addEventListener("keydown", preventEnter);
+
+        // Unlock after 3 seconds
+        setTimeout(() => {
+
+          inputField.disabled = false;
+          inputField.placeholder = "Type your message...";
+
+          if (sendButton) sendButton.disabled = false;
+
+          inputField.removeEventListener("keydown", preventEnter);
+
+          console.log("Chat input unlocked");
+
+        }, 4000);
+
+        clearInterval(interval);
+
+      }, 200);
+
+    }, 500);
   }
 );
 </script>
+
 </body>
- 
+
 </html>
 
 
@@ -243,8 +262,4 @@ window.addEventListener(
 
 
 
-
-
-
-
-
+ 
