@@ -148,7 +148,7 @@
     <div class="footer-top">India</div>
     <div class="footer-bottom">
       <div>
-        <a href="#">About A</a>
+        <a href="#">About </a>
         <a href="#">Advertising</a>
         <a href="#">Business</a>
         <a href="#">How Search works</a>
@@ -161,37 +161,55 @@
     </div>
   </footer>
 
-<script type='text/javascript'>
-	function initEmbeddedMessaging() {
-		try {
-			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+<!-- =====================================
+     1️⃣ DEFINE SETTINGS BEFORE BOOTSTRAP
+===================================== -->
+<script>
+window.embeddedservice_bootstrap =
+  window.embeddedservice_bootstrap || {};
 
-			embeddedservice_bootstrap.init(
-				'00DBf000000vYTB',
-				'CFG_Website',
-				'https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934',
-				{
-					scrt2URL: 'https://cfg--techiladev.sandbox.my.salesforce-scrt.com'
-				}
-			);
-		} catch (err) {
-			console.error('Error loading Embedded Messaging: ', err);
-		}
-	};
+embeddedservice_bootstrap.settings = {
+  language: "en_US",
+  hideChatButtonOnLoad: true   // hide launcher until session ready
+};
 </script>
 
-<script type='text/javascript' src='https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
+<!-- =====================================
+     2️⃣ INIT FUNCTION
+===================================== -->
 <script>
-let sessionReady = false;
+function initEmbeddedMessaging() {
+  try {
+    embeddedservice_bootstrap.init(
+      '00DBf000000vYTB',
+      'CFG_Website',
+      'https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934',
+      {
+        scrt2URL:
+          'https://cfg--techiladev.sandbox.my.salesforce-scrt.com'
+      }
+    );
+  } catch (err) {
+    console.error('Error loading Embedded Messaging:', err);
+  }
+}
+</script>
 
-/* ------------------------------
-   Disable chat launcher initially
------------------------------- */
-embeddedservice_bootstrap.settings.hideChatButtonOnLoad = true;
 
-/* ------------------------------
-   Wait for session readiness
------------------------------- */
+<!-- =====================================
+     3️⃣ LOAD SALESFORCE BOOTSTRAP
+===================================== -->
+<script
+  src="https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js"
+  onload="initEmbeddedMessaging()">
+</script>
+
+
+<!-- =====================================
+     4️⃣ WAIT FOR SESSION ACTIVE
+===================================== -->
+<script>
 window.addEventListener(
   "onEmbeddedMessagingSessionStatusUpdate",
   (event) => {
@@ -200,10 +218,9 @@ window.addEventListener(
 
     if (event.detail.status === "Active") {
 
-      sessionReady = true;
       console.log("Messaging session READY ✅");
 
-      // Show chat button only when ready
+      // show chat only after backend ready
       embeddedservice_bootstrap.utilAPI.showChatButton();
     }
   }
@@ -212,6 +229,7 @@ window.addEventListener(
 </body>
  
 </html>
+
 
 
 
