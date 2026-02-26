@@ -148,7 +148,7 @@
     <div class="footer-top">India</div>
     <div class="footer-bottom">
       <div>
-        <a href="#">About </a>
+        <a href="#">About A</a>
         <a href="#">Advertising</a>
         <a href="#">Business</a>
         <a href="#">How Search works</a>
@@ -184,6 +184,14 @@
 <script>
 let sessionReady = false;
 
+/* ------------------------------
+   Disable chat launcher initially
+------------------------------ */
+embeddedservice_bootstrap.settings.hideChatButtonOnLoad = true;
+
+/* ------------------------------
+   Wait for session readiness
+------------------------------ */
 window.addEventListener(
   "onEmbeddedMessagingSessionStatusUpdate",
   (event) => {
@@ -191,22 +199,20 @@ window.addEventListener(
     console.log("Session status:", event.detail.status);
 
     if (event.detail.status === "Active") {
+
       sessionReady = true;
       console.log("Messaging session READY ✅");
+
+      // Show chat button only when ready
+      embeddedservice_bootstrap.utilAPI.showChatButton();
     }
   }
 );
-
-/* Prevent early sending */
-window.addEventListener("onEmbeddedMessageSent", (event) => {
-  if (!sessionReady) {
-    console.warn("Message sent before session active.");
-  }
-});
-</script> 
+</script>
 </body>
  
 </html>
+
 
 
 
