@@ -148,7 +148,7 @@
     <div class="footer-top">India</div>
     <div class="footer-bottom">
       <div>
-        <a href="#">About </a>
+        <a href="#">About A</a>
         <a href="#">Advertising</a>
         <a href="#">Business</a>
         <a href="#">How Search works</a>
@@ -184,6 +184,31 @@
 <script>
 let inputHandled = false;
 
+/* ---------------------------------------
+   Deep shadow DOM query helper
+--------------------------------------- */
+function queryDeep(selector, root = document) {
+  const elements = root.querySelectorAll("*");
+
+  for (const el of elements) {
+
+    // direct match
+    if (el.matches && el.matches(selector)) {
+      return el;
+    }
+
+    // search inside shadow root
+    if (el.shadowRoot) {
+      const found = queryDeep(selector, el.shadowRoot);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+/* ---------------------------------------
+   Messaging event
+--------------------------------------- */
 window.addEventListener(
   "onEmbeddedMessagingConversationStarted",
   () => {
@@ -193,31 +218,16 @@ window.addEventListener(
 
     console.log("Conversation started");
 
-    const findChatInput = () => {
-
-      // Step 1 — messaging container
-      const messagingEl = document.querySelector(
-        "embeddedmessaging-conversation"
-      );
-
-      if (!messagingEl || !messagingEl.shadowRoot) return null;
-
-      // Step 2 — enter shadow DOM
-      const shadow = messagingEl.shadowRoot;
-
-      // Step 3 — find textarea
-      return shadow.querySelector(
-        "textarea.embeddedMessagingInputFooterTextArea"
-      );
-    };
-
     const interval = setInterval(() => {
 
-      const chatInput = findChatInput();
+      // ✅ finds textarea across ALL shadow DOM levels
+      const chatInput = queryDeep(
+        "textarea.embeddedMessagingInputFooterTextArea"
+      );
 
       if (chatInput) {
 
-        console.log("Chat input found ✅");
+        console.log("Chat input located ✅");
 
         const originalPlaceholder = chatInput.placeholder;
 
@@ -241,6 +251,7 @@ window.addEventListener(
 </body>
  
 </html>
+
 
 
 
