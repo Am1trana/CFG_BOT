@@ -182,42 +182,16 @@
 
 <script type='text/javascript' src='https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 <script>
+window.addEventListener("onEmbeddedMessagingReady", function () {
+    console.log("✅ Messaging Ready Fired");
+});
+
 window.addEventListener("onEmbeddedMessagingWindowOpened", function () {
+    console.log("✅ Window Opened Fired");
+});
 
-    console.log("Chat window opened — disabling input for 2 seconds.");
-
-    // Wait a moment for textarea to render
-    setTimeout(() => {
-
-        const interval = setInterval(() => {
-
-            const messagingContainer = document.querySelector("embeddedservice-messaging");
-
-            if (!messagingContainer) return;
-
-            // Access shadow root
-            const shadowRoot = messagingContainer.shadowRoot;
-            if (!shadowRoot) return;
-
-            const textarea = shadowRoot.querySelector("textarea");
-
-            if (textarea) {
-
-                textarea.disabled = true;
-                textarea.placeholder = "Please wait...";
-
-                setTimeout(() => {
-                    textarea.disabled = false;
-                    textarea.placeholder = "Type your message...";
-                    console.log("Input re-enabled.");
-                }, 2000);
-
-                clearInterval(interval);
-            }
-
-        }, 200);
-
-    }, 300);
+window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
+    console.log("✅ Conversation Started Fired");
 });
 </script>
 
@@ -239,5 +213,6 @@ window.addEventListener("onEmbeddedMessagingWindowOpened", function () {
 
 
  
+
 
 
