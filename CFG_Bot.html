@@ -182,52 +182,52 @@
 
 <script type='text/javascript' src='https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 <script>
-let inputDisabledOnce = false;
+let blockedOnce = false;
 
 window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
 
-    if (inputDisabledOnce) return;
-    inputDisabledOnce = true;
+    if (blockedOnce) return;
+    blockedOnce = true;
 
-    console.log("[CFG BOT] Conversation started — disabling input.");
+    console.log("[CFG BOT] Blocking chat (responsive).");
 
-    const interval = setInterval(() => {
+    setTimeout(() => {
 
-        const root = document.querySelector("embeddedservice-messaging");
-        if (!root || !root.shadowRoot) return;
+        const chatContainer = document.getElementById("embedded-messaging");
 
-        const level1 = root.shadowRoot;
-
-        const convoState = level1.querySelector("embeddedmessaging-conversation-state");
-        if (!convoState || !convoState.shadowRoot) return;
-
-        const level2 = convoState.shadowRoot;
-
-        const footer = level2.querySelector("embeddedmessaging-input-footer");
-        if (!footer || !footer.shadowRoot) return;
-
-        const level3 = footer.shadowRoot;
-
-        const textarea = level3.querySelector("textarea");
-
-        if (textarea) {
-            console.log("[CFG BOT] Textarea found. Disabling for 2 sec.");
-
-            textarea.disabled = true;
-            textarea.placeholder = "Please wait...";
-
-            setTimeout(() => {
-                textarea.disabled = false;
-                textarea.placeholder = "Type your message...";
-                console.log("[CFG BOT] Input re-enabled.");
-            }, 2000);
-
-            clearInterval(interval);
+        if (!chatContainer) {
+            console.log("[CFG BOT] Chat container not found.");
+            return;
         }
 
-    }, 200);
+        const rect = chatContainer.getBoundingClientRect();
 
-    setTimeout(() => clearInterval(interval), 6000);
+        const blocker = document.createElement("div");
+        blocker.id = "cfgChatBlocker";
+
+        blocker.style.position = "fixed";
+        blocker.style.top = rect.top + "px";
+        blocker.style.left = rect.left + "px";
+        blocker.style.width = rect.width + "px";
+        blocker.style.height = rect.height + "px";
+        blocker.style.background = "rgba(0,0,0,0.05)";
+        blocker.style.backdropFilter = "blur(1px)";
+        blocker.style.borderRadius = "12px";
+        blocker.style.zIndex = "999999";
+        blocker.style.pointerEvents = "all";
+        blocker.style.transition = "opacity 0.3s ease";
+
+        document.body.appendChild(blocker);
+
+        console.log("[CFG BOT] Chat blocked.");
+
+        setTimeout(() => {
+            blocker.style.opacity = "0";
+            setTimeout(() => blocker.remove(), 300);
+            console.log("[CFG BOT] Chat unblocked.");
+        }, 2000);
+
+    }, 300);
 
 });
 </script>
@@ -250,6 +250,7 @@ window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
 
 
  
+
 
 
 
