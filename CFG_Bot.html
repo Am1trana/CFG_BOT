@@ -148,7 +148,7 @@
     <div class="footer-top">India</div>
     <div class="footer-bottom">
       <div>
-        <a href="#">About A</a>
+        <a href="#">About </a>
         <a href="#">Advertising</a>
         <a href="#">Business</a>
         <a href="#">How Search works</a>
@@ -191,7 +191,7 @@ window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
 
     console.log("[CFG BOT] Conversation started — disabling input.");
 
-    const tryFindInput = setInterval(() => {
+    const interval = setInterval(() => {
 
         const root = document.querySelector("embeddedservice-messaging");
         if (!root || !root.shadowRoot) return;
@@ -203,7 +203,12 @@ window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
 
         const level2 = convoState.shadowRoot;
 
-        const textarea = level2.querySelector("textarea");
+        const footer = level2.querySelector("embeddedmessaging-input-footer");
+        if (!footer || !footer.shadowRoot) return;
+
+        const level3 = footer.shadowRoot;
+
+        const textarea = level3.querySelector("textarea");
 
         if (textarea) {
             console.log("[CFG BOT] Textarea found. Disabling for 2 sec.");
@@ -217,12 +222,12 @@ window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
                 console.log("[CFG BOT] Input re-enabled.");
             }, 2000);
 
-            clearInterval(tryFindInput);
+            clearInterval(interval);
         }
 
     }, 200);
 
-    setTimeout(() => clearInterval(tryFindInput), 5000);
+    setTimeout(() => clearInterval(interval), 6000);
 
 });
 </script>
@@ -245,6 +250,7 @@ window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
 
 
  
+
 
 
 
