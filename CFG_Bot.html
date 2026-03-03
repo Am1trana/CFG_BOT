@@ -148,7 +148,7 @@
     <div class="footer-top">India</div>
     <div class="footer-bottom">
       <div>
-        <a href="#">About </a>
+        <a href="#">About A</a>
         <a href="#">Advertising</a>
         <a href="#">Business</a>
         <a href="#">How Search works</a>
@@ -182,45 +182,42 @@
 
 <script type='text/javascript' src='https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 <script>
-let inputDisabledOnce = false;
+window.addEventListener("onEmbeddedMessagingWindowOpened", function () {
 
-// When Messaging runtime is ready
-window.addEventListener("onEmbeddedMessagingReady", function () {
-console.log("Messaging ready.");
-});
+    console.log("Chat window opened — disabling input for 2 seconds.");
 
-// When conversation officially starts
-window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
+    // Wait a moment for textarea to render
+    setTimeout(() => {
 
-if (inputDisabledOnce) return;
-inputDisabledOnce = true;
+        const interval = setInterval(() => {
 
-console.log("Conversation started — disabling input for 4 seconds.");
+            const messagingContainer = document.querySelector("embeddedservice-messaging");
 
-// Wait briefly to ensure input is rendered
-setTimeout(() => {
+            if (!messagingContainer) return;
 
-const interval = setInterval(() => {
-const inputField = document.querySelector("textarea, input[type='text']");
+            // Access shadow root
+            const shadowRoot = messagingContainer.shadowRoot;
+            if (!shadowRoot) return;
 
-if (inputField) {
-inputField.disabled = true;
+            const textarea = shadowRoot.querySelector("textarea");
 
-// Optional: visually indicate disabled state
-inputField.placeholder = "Connecting... Please wait";
+            if (textarea) {
 
-setTimeout(() => {
-inputField.disabled = false;
-inputField.placeholder = "Type your message...";
-console.log("Input re-enabled.");
-}, 4000);
+                textarea.disabled = true;
+                textarea.placeholder = "Please wait...";
 
-clearInterval(interval);
-}
-}, 200);
+                setTimeout(() => {
+                    textarea.disabled = false;
+                    textarea.placeholder = "Type your message...";
+                    console.log("Input re-enabled.");
+                }, 2000);
 
-}, 300);
+                clearInterval(interval);
+            }
 
+        }, 200);
+
+    }, 300);
 });
 </script>
 
@@ -242,4 +239,5 @@ clearInterval(interval);
 
 
  
+
 
