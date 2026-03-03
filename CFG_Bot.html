@@ -148,7 +148,7 @@
     <div class="footer-top">India</div>
     <div class="footer-bottom">
       <div>
-        <a href="#">Sharaddha A</a>
+        <a href="#">About A</a>
         <a href="#">Advertising</a>
         <a href="#">Business</a>
         <a href="#">How Search works</a>
@@ -198,10 +198,10 @@ window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
 
         const level1 = root.shadowRoot;
 
-        const convo = level1.querySelector("embedded-messaging-conversation");
-        if (!convo || !convo.shadowRoot) return;
+        const convoState = level1.querySelector("embeddedmessaging-conversation-state");
+        if (!convoState || !convoState.shadowRoot) return;
 
-        const level2 = convo.shadowRoot;
+        const level2 = convoState.shadowRoot;
 
         const textarea = level2.querySelector("textarea");
 
@@ -222,7 +222,6 @@ window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
 
     }, 200);
 
-    // Safety stop
     setTimeout(() => clearInterval(tryFindInput), 5000);
 
 });
@@ -246,6 +245,7 @@ window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
 
 
  
+
 
 
 
