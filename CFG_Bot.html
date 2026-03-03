@@ -182,16 +182,49 @@
 
 <script type='text/javascript' src='https://cfg--techiladev.sandbox.my.site.com/ESWCFGWebsite1768814898934/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 <script>
-window.addEventListener("onEmbeddedMessagingReady", function () {
-    console.log("✅ Messaging Ready Fired");
-});
-
-window.addEventListener("onEmbeddedMessagingWindowOpened", function () {
-    console.log("✅ Window Opened Fired");
-});
+let inputDisabledOnce = false;
 
 window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
-    console.log("✅ Conversation Started Fired");
+
+    if (inputDisabledOnce) return;
+    inputDisabledOnce = true;
+
+    console.log("[CFG BOT] Conversation started — disabling input.");
+
+    const tryFindInput = setInterval(() => {
+
+        const root = document.querySelector("embeddedservice-messaging");
+        if (!root || !root.shadowRoot) return;
+
+        const level1 = root.shadowRoot;
+
+        const convo = level1.querySelector("embedded-messaging-conversation");
+        if (!convo || !convo.shadowRoot) return;
+
+        const level2 = convo.shadowRoot;
+
+        const textarea = level2.querySelector("textarea");
+
+        if (textarea) {
+            console.log("[CFG BOT] Textarea found. Disabling for 2 sec.");
+
+            textarea.disabled = true;
+            textarea.placeholder = "Please wait...";
+
+            setTimeout(() => {
+                textarea.disabled = false;
+                textarea.placeholder = "Type your message...";
+                console.log("[CFG BOT] Input re-enabled.");
+            }, 2000);
+
+            clearInterval(tryFindInput);
+        }
+
+    }, 200);
+
+    // Safety stop
+    setTimeout(() => clearInterval(tryFindInput), 5000);
+
 });
 </script>
 
@@ -213,6 +246,7 @@ window.addEventListener("onEmbeddedMessagingConversationStarted", function () {
 
 
  
+
 
 
 
